@@ -21,6 +21,9 @@ hex_segments = 6;
 hex_pattern_thickness = 1;
 hex_pattern_width = 18.9;
 
+//epsilon (prevents flickering), don't change unless you know what you're doing
+e = 0.001;
+
 your_text = "free as in freedom (CC-BY-SA)";
 
 module EmptyFlashDriveDrawer() {
@@ -55,8 +58,8 @@ if(part == "upper" || part == "lower")
         if(part == "upper" && keyring==true) translate([-17,-6,0])cylinder(3.5, d=17, $fn=6);
       }
       //screw holes
-      translate([0,0,-0.1])cylinder(8, d=3);
-      translate([0,length,-0.1])cylinder(8, d=3);
+      translate([0,0,-e])cylinder(8, d=3);
+      translate([0,length,-e])cylinder(8, d=3);
 
 
       //holes for the upper part like nut holes and finger holes
@@ -67,27 +70,27 @@ if(part == "upper" || part == "lower")
         hull()translate([0,0,thickness+.1])nut("M3");
 
         //keyring hole
-        translate([-17,-6,-0.1])cylinder(thickness*2, d=9, $fn=6);
+        translate([-17,-6,-e])cylinder(thickness*2, d=9, $fn=6);
 
         //finger holes
-        translate([-14,length*(2/3),-0.1])cylinder(thickness*2, d=17, $fn=6);
-        translate([14,length*(1/3),-0.1])cylinder(thickness*2, d=17, $fn=6);
-        translate([0,length/2,-0.1])cylinder(thickness*2, d=14, $fn=6);
+        translate([-14,length*(2/3),-e])cylinder(thickness*2, d=17, $fn=6);
+        translate([14,length*(1/3),-e])cylinder(thickness*2, d=17, $fn=6);
+        translate([0,length/2,-e])cylinder(thickness*2, d=14, $fn=6);
         //finger hole bevels
         finger_hole_bevel_height = thickness-finger_bevel_height;
         hull(){
-          translate([-14,length*(2/3),finger_hole_bevel_height])cylinder(0.001, d=17, $fn=6);
-          translate([-14,length*(2/3),thickness])cylinder(0.001, d=17+2*bevel_offset, $fn=6);
+          translate([-14,length*(2/3),finger_hole_bevel_height])cylinder(-e, d=17, $fn=6);
+          translate([-14,length*(2/3),thickness])cylinder(-e, d=17+2*bevel_offset, $fn=6);
         }
         hull(){
-          translate([14,length*(1/3),finger_hole_bevel_height])cylinder(0.001, d=17, $fn=6);
-          translate([14,length*(1/3),thickness])cylinder(0.001, d=17+2*bevel_offset, $fn=6);
+          translate([14,length*(1/3),finger_hole_bevel_height])cylinder(-e, d=17, $fn=6);
+          translate([14,length*(1/3),thickness])cylinder(-e, d=17+2*bevel_offset, $fn=6);
         }
         if(middle_hole_bevel == true)
         {
           hull(){
-            translate([0,length/2,finger_hole_bevel_height])cylinder(0.001, d=14, $fn=6);
-            translate([0,length/2,thickness])cylinder(0.001, d=14+2*bevel_offset, $fn=6);
+            translate([0,length/2,finger_hole_bevel_height])cylinder(-e, d=14, $fn=6);
+            translate([0,length/2,thickness])cylinder(-e, d=14+2*bevel_offset, $fn=6);
           }
         }
       }
@@ -102,8 +105,8 @@ if(part == "upper" || part == "lower")
 
         translate([10.4,length/2,0.49])rotate([0,180,90])linear_extrude(height = 0.5) text(your_text,3.8,"Ubuntu Mono",halign="center", valign="top");
         //screw head spaces
-        translate([0,0,-3.3])cylinder(2, d2=3, d1=6);
-        translate([0,length,-3.3])cylinder(2, d2=3, d1=6);
+        translate([0,0,-e])cylinder(2, d2=3, d1=6);
+        translate([0,length,-e])cylinder(2, d2=3, d1=6);
       }
   }
 }
