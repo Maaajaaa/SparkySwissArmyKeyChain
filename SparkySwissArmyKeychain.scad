@@ -5,17 +5,27 @@ include<nutsnbolts/cyl_head_bolt.scad>
 part = "upper";
 keyring = true;
 length = 85;        //space between the screws
+thickness = 3.5;    //thickness of the main parts
+
+//bevel of main part
+bevel_height = 1.2;
+bevel_offset = 1.2;
+//bevel of finger holes
+finger_bevel_height = 2;
+finger_bevel_offset = 2;
+
 honeycomb_pattern_offset = 8;
 hex_segments = 6;
 hex_pattern_thickness = 1;
 hex_pattern_width = 18.9;
+
 your_text = "free as in freedom (CC-BY-SA)";
 
 module EmptyFlashDriveDrawer() {
     difference()
     {
         hull(){
-            hexagon(25,6.6);
+            cylinder(6.6, d=25, $fn=6);
         }
         translate([0,0,-7])cylinder(20,d=4);
         translate([-5.5,0,-2.3])cube([11.9,20,4.6])
@@ -29,32 +39,42 @@ if(part == "upper" || part == "lower")
   difference() {
       union()
       {
+        //main part
         hull()
         {
-          translate([0,0,-1.45])cylinder(3.5, d=25, $fn=6);
-          translate([0,length,-1.45])cylinder(3.5, d=25, $fn=6);
+          //big lower part of bevel
+          translate([0,0,0])cylinder(thickness-bevel_height, d=25, $fn=6);
+          translate([0,length,0])cylinder(thickness-bevel_height, d=25, $fn=6);
+          //small upper part of bevel
+          translate([0,0,thickness-bevel_height])cylinder(bevel_height, d=25-2*bevel_offset, $fn=6);
+          translate([0,length,thickness-bevel_height])cylinder(bevel_height, d=25-2*bevel_offset, $fn=6);
         }
-        if(part == "upper" && keyring==true) translate([-17,-6,-1.45])cylinder(3.5, d=17, $fn=6);
+        //keyring
+        if(part == "upper" && keyring==true) translate([-17,-6,0])cylinder(3.5, d=17, $fn=6);
       }
-      translate([0,0,-5])cylinder(8, d=3);
-      translate([0,length,-5])cylinder(8, d=3);
-      
-      
+      //screw holes
+      translate([0,0,-0.1])cylinder(8, d=3);
+      translate([0,length,-0.1])cylinder(8, d=3);
 
+
+      //holes for the upper part like nut holes and finger holes
       if(part == "upper")
       {
-        translate([0,length,2.1])nut("M3");
-        translate([0,0,2.1])nut("M3");
-        translate([-17,-6,-1.46])cylinder(5, d=9, $fn=6);
-        translate([-14,length*(2/3),-1.46])cylinder(5, d=17, $fn=6);
-        translate([14,length*(1/3),-1.46])cylinder(5, d=17, $fn=6);
-        translate([0,length/2,-1.46])cylinder(5, d=14, $fn=6);
+        //nut holes
+        hull()translate([0,length,thickness+.1])nut("M3");
+        hull()translate([0,0,thickness+.1])nut("M3");
+        //keyring hole
+        translate([-17,-6,-0.1])cylinder(thickness*2, d=9, $fn=6);
+        //finger holes
+        translate([-14,length*(2/3),-0.1])cylinder(thickness*2, d=17, $fn=6);
+        translate([14,length*(1/3),-0.1])cylinder(thickness*2, d=17, $fn=6);
+        translate([0,length/2,-0.1])cylinder(thickness*2, d=14, $fn=6);
       }
-
+      //holes for the lower part like hex-pattern
       if(part == "lower")
       {
         hex_element_size =(length-2*honeycomb_pattern_offset-(hex_segments+1)*hex_pattern_thickness)/hex_segments;
-        translate([-hex_pattern_width/2,honeycomb_pattern_offset,0]) 
+        translate([-hex_pattern_width/2,honeycomb_pattern_offset,0])
           antiHoneycomb(hex_pattern_width, length-2*honeycomb_pattern_offset, 10, hex_element_size
           , hex_pattern_thickness);
         translate([-10.5,length/2,-2.8])rotate([0,180,90])linear_extrude(height = .5) text("Designed by Mattis Männel",4,"Ubuntu",halign="center");
