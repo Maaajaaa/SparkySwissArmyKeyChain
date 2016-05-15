@@ -2,7 +2,7 @@ $fn = 10;
 include<honeycomb.scad>
 include<nutsnbolts/cyl_head_bolt.scad>
 
-part = "lower";
+parts = "usb-drawer";
 keyring = false;
 length = 85;        //space between the screws
 width = 30;
@@ -21,25 +21,42 @@ hex_segments = 6;
 hex_pattern_thickness = 1;
 hex_pattern_width = 18.9;
 
+//indented or outdented
+usb_text_style = "out";
+
 //epsilon (prevents flickering), don't change unless you know what you're doing
 e = 0.001;
 
 your_text = "free as in freedom (CC-BY-SA)";
 
-module EmptyFlashDriveDrawer() {
+module FlashDriveDrawer() {
+    //a is the legth of one side of the hexagon of the main parts
+    a = width*sin(30);
+    echo(str("a = ", a));
+    dx = cos(30)*(a/2);
+    echo(str("dx = ", dx));
+    dy = sin(30)*(a/2);
+
     difference()
     {
-        hull(){
-            cylinder(6.6, d=width, $fn=6);
+        cylinder(6.6, d=width, $fn=6);
+        translate([0,0,-e])cylinder(thickness*2,d=4);
+        translate([-5.95,0,1])cube([11.9,20,4.6]);
+        if(usb_text_style == "indented" || usb_text_style == "in")
+        {
+          translate([width/2-dy,dx,3.3]) rotate([90,0,120])translate([0,0,-0.49])linear_extrude(height = .5)text("USB",4,halign="center", valign="center");
+          translate([-width/2+dy,dx,3.3])rotate([90,0,-120])translate([0,0,-0.49])linear_extrude(height = 0.5)text("USB",4,halign="center", valign="center");
         }
-        translate([0,0,-7])cylinder(20,d=4);
-        translate([-5.5,0,-2.3])cube([11.9,20,4.6])
-        translate([-7.3,11.5,-2]) rotate([90,0,-120]) linear_extrude(height = .5)text("USB",4);
-        translate([12.9,2,-2]) rotate([90,0,120]) linear_extrude(height = .5)text("USB",4);
     }
+    if(usb_text_style == "outdented" || usb_text_style == "out")
+    {
+      translate([width/2-dy,dx,3.3]) rotate([90,0,120])translate([0,0,0])linear_extrude(height = .5)text("USB",4,halign="center", valign="center");
+      translate([-width/2+dy,dx,3.3])rotate([90,0,-120])translate([0,0,0])linear_extrude(height = 0.5)text("USB",4,halign="center", valign="center");
+    }
+
 }
 
-if(part == "upper" || part == "lower")
+module MainPart(part)
 {
   difference() {
       union()
@@ -111,7 +128,19 @@ if(part == "upper" || part == "lower")
   }
 }
 
-if(part == "usb-drawer" || part == "usb_drawer")
+if(parts == "usb-drawer" || parts == "usb_drawer")
 {
-  EmptyFlashDriveDrawer();
+  FlashDriveDrawer();
+}
+
+if(parts == "upper" || parts == "lower")
+{
+  MainPart(parts);
+}
+
+if(parts ==  "all")
+{
+  translate([-width/2-3,0,0])MainPart("upper");
+  translate([width/2+3,0,0])MainPart("lower");
+  translate([0,-width,0])FlashDriveDrawer();
 }
