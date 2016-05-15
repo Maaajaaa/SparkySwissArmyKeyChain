@@ -2,9 +2,10 @@ $fn = 10;
 include<honeycomb.scad>
 include<nutsnbolts/cyl_head_bolt.scad>
 
-part = "upper";
+part = "lower";
 keyring = false;
 length = 85;        //space between the screws
+width = 30;
 thickness = 3.5;    //thickness of the main parts
 
 //bevel of main part
@@ -26,7 +27,7 @@ module EmptyFlashDriveDrawer() {
     difference()
     {
         hull(){
-            cylinder(6.6, d=25, $fn=6);
+            cylinder(6.6, d=width, $fn=6);
         }
         translate([0,0,-7])cylinder(20,d=4);
         translate([-5.5,0,-2.3])cube([11.9,20,4.6])
@@ -44,11 +45,11 @@ if(part == "upper" || part == "lower")
         hull()
         {
           //big lower part of bevel
-          translate([0,0,0])cylinder(thickness-bevel_height, d=25, $fn=6);
-          translate([0,length,0])cylinder(thickness-bevel_height, d=25, $fn=6);
+          translate([0,0,0])cylinder(thickness-bevel_height, d=width, $fn=6);
+          translate([0,length,0])cylinder(thickness-bevel_height, d=width, $fn=6);
           //small upper part of bevel
-          translate([0,0,thickness-bevel_height])cylinder(bevel_height, d=25-2*bevel_offset, $fn=6);
-          translate([0,length,thickness-bevel_height])cylinder(bevel_height, d=25-2*bevel_offset, $fn=6);
+          translate([0,0,thickness-bevel_height])cylinder(bevel_height, d=width-2*bevel_offset, $fn=6);
+          translate([0,length,thickness-bevel_height])cylinder(bevel_height, d=width-2*bevel_offset, $fn=6);
         }
         //keyring
         if(part == "upper" && keyring==true) translate([-17,-6,0])cylinder(3.5, d=17, $fn=6);
@@ -97,9 +98,9 @@ if(part == "upper" || part == "lower")
         translate([-hex_pattern_width/2,honeycomb_pattern_offset,0])
           antiHoneycomb(hex_pattern_width, length-2*honeycomb_pattern_offset, 10, hex_element_size
           , hex_pattern_thickness);
-        translate([-10.5,length/2,-2.8])rotate([0,180,90])linear_extrude(height = .5) text("Designed by Mattis Männel",4,"Ubuntu",halign="center");
+        translate([-10.5,length/2,0.49])rotate([0,180,90])linear_extrude(height = 0.5) text("Designed by Mattis Männel",4,"Ubuntu",halign="center");
 
-        translate([9.8,length/2,-2.8])rotate([0,180,90])linear_extrude(height = .5) text(your_text,3.8,"Ubuntu Mono",halign="center", valign="top");
+        translate([10.4,length/2,0.49])rotate([0,180,90])linear_extrude(height = 0.5) text(your_text,3.8,"Ubuntu Mono",halign="center", valign="top");
         //screw head spaces
         translate([0,0,-3.3])cylinder(2, d2=3, d1=6);
         translate([0,length,-3.3])cylinder(2, d2=3, d1=6);
