@@ -3,7 +3,7 @@ include<honeycomb.scad>
 include<nutsnbolts/cyl_head_bolt.scad>
 
 part = "upper";
-keyring = true;
+keyring = false;
 length = 85;        //space between the screws
 thickness = 3.5;    //thickness of the main parts
 
@@ -11,8 +11,9 @@ thickness = 3.5;    //thickness of the main parts
 bevel_height = 1.2;
 bevel_offset = 1.2;
 //bevel of finger holes
-finger_bevel_height = 2;
-finger_bevel_offset = 2;
+finger_bevel_height = 1.2;
+finger_bevel_offset = 1.2;
+middle_hole_bevel = true;
 
 honeycomb_pattern_offset = 8;
 hex_segments = 6;
@@ -63,12 +64,31 @@ if(part == "upper" || part == "lower")
         //nut holes
         hull()translate([0,length,thickness+.1])nut("M3");
         hull()translate([0,0,thickness+.1])nut("M3");
+
         //keyring hole
         translate([-17,-6,-0.1])cylinder(thickness*2, d=9, $fn=6);
+
         //finger holes
         translate([-14,length*(2/3),-0.1])cylinder(thickness*2, d=17, $fn=6);
         translate([14,length*(1/3),-0.1])cylinder(thickness*2, d=17, $fn=6);
         translate([0,length/2,-0.1])cylinder(thickness*2, d=14, $fn=6);
+        //finger hole bevels
+        finger_hole_bevel_height = thickness-finger_bevel_height;
+        hull(){
+          translate([-14,length*(2/3),finger_hole_bevel_height])cylinder(0.001, d=17, $fn=6);
+          translate([-14,length*(2/3),thickness])cylinder(0.001, d=17+2*bevel_offset, $fn=6);
+        }
+        hull(){
+          translate([14,length*(1/3),finger_hole_bevel_height])cylinder(0.001, d=17, $fn=6);
+          translate([14,length*(1/3),thickness])cylinder(0.001, d=17+2*bevel_offset, $fn=6);
+        }
+        if(middle_hole_bevel == true)
+        {
+          hull(){
+            translate([0,length/2,finger_hole_bevel_height])cylinder(0.001, d=14, $fn=6);
+            translate([0,length/2,thickness])cylinder(0.001, d=14+2*bevel_offset, $fn=6);
+          }
+        }
       }
       //holes for the lower part like hex-pattern
       if(part == "lower")
