@@ -5,7 +5,7 @@ include<nutsnbolts/cyl_head_bolt.scad>
 
 /* [Global] */
 //Part(s):
-parts = "upper"; //[lower,upper,usb-drawer,all]
+parts = "all"; //[lower,upper,usb-drawer,all]
 //Do you wan't a Keyring?
 keyring = "Yes"; //[Yes,No,I'm Chuck Norris]
 //Distance between the screws
@@ -39,7 +39,7 @@ hex_pattern_width = 18.9; //[3:0.1:45]
 
 /* [Text] */
 //style of the text on the usb-drawer
-usb_text_style = "out"; //[in,out]
+usb_text_style = "in"; //[in,out]
 //font of the text on the usb-drawer, all of Google's fonts are supported in Customizer
 font_usb = "";
 
@@ -54,9 +54,7 @@ font = "Ubuntu Mono";*/
 module FlashDriveDrawer() {
     //a is the legth of one side of the hexagon of the main parts
     a = width*sin(30);
-    echo(str("a = ", a));
     dx = cos(30)*(a/2);
-    echo(str("dx = ", dx));
     dy = sin(30)*(a/2);
 
     difference()
@@ -121,18 +119,18 @@ module MainPart(part)
         //finger hole bevels
         finger_hole_bevel_height = thickness-finger_bevel_height;
         hull(){
-          translate([-14,length*(2/3),finger_hole_bevel_height])cylinder(-e, d=17, $fn=6);
-          translate([-14,length*(2/3),thickness])cylinder(-e, d=17+2*bevel_offset, $fn=6);
+          translate([-14,length*(2/3),finger_hole_bevel_height])cylinder(e, d=17, $fn=6);
+          translate([-14,length*(2/3),thickness])cylinder(e, d=17+2*bevel_offset, $fn=6);
         }
         hull(){
-          translate([14,length*(1/3),finger_hole_bevel_height])cylinder(-e, d=17, $fn=6);
-          translate([14,length*(1/3),thickness])cylinder(-e, d=17+2*bevel_offset, $fn=6);
+          translate([14,length*(1/3),finger_hole_bevel_height])cylinder(e, d=17, $fn=6);
+          translate([14,length*(1/3),thickness])cylinder(e, d=17+2*bevel_offset, $fn=6);
         }
         if(middle_hole_bevel == true)
         {
           hull(){
-            translate([0,length/2,finger_hole_bevel_height])cylinder(-e, d=14, $fn=6);
-            translate([0,length/2,thickness])cylinder(-e, d=14+2*bevel_offset, $fn=6);
+            translate([0,length/2,finger_hole_bevel_height])cylinder(e, d=14, $fn=6);
+            translate([0,length/2,thickness])cylinder(e, d=14+2*bevel_offset, $fn=6);
           }
         }
       }
@@ -147,8 +145,8 @@ module MainPart(part)
 
         //translate([10.4,length/2,0.49])rotate([0,180,90])linear_extrude(height = 0.5) text(your_text,3.8,"Ubuntu Mono",halign="center", valign="top");
         //screw head spaces
-        translate([0,0,-e])cylinder(2, d2=3, d1=6);
-        translate([0,length,-e])cylinder(2, d2=3, d1=6);
+        translate([0,0,thickness-2+e])cylinder(2, d1=3, d2=6);
+        translate([0,length,thickness-2+e])cylinder(2, d1=3, d2=6);
       }
   }
 }
